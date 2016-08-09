@@ -1,25 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 ## Mastermind
 # By D.J. Murray
 # 2016-08-03
 # License GPLv3
 
 from random import shuffle
+import pickle
+from os import remove
+from sys import argv
 
 debug=False
-
-print '\
-Mastermind - Guess the code\r\n\
-Available \'colors\' are: 1,2,3,4,5,6.\r\n\
-The code consists of a combination of 4 unique colors.\r\n\
-You can guess 10 times before the game is over.\r\n\
-Input your guess like this: \'1234\'.\r\n\
-After each guess the computer returns how many items were guessed correct (this is indicated by a \'2\')\r\n\
-and how many colors were guessed correct but had an incorrect position. (this is indicated by a \'1\').\r\n\
-So if you get [2, 2, 2, 2] the guess was correct.\r\n\
-If you guess the code within 10 tries, you win!\r\n\
-'
-allcorrect = [2,2,2,2]
+allcorrect = [2]*4
+savefile = "mastermind_status.p"
 
 def check_code( code, guess ):
   if debug:
@@ -50,10 +42,8 @@ def check_code( code, guess ):
     print 'correct items:\t',item
     print 'correct it+pos:\t',correct
     print
-  print 'Result:\t',tot
-  print
   
-  return tot == allcorrect
+  return (tot,tot == allcorrect)
 
 def read_guess():
   guessr = ''
@@ -78,25 +68,86 @@ def new_code():
   shuffle(code)
   return code[:4] #return 4 items
 
-def start_game(code):
+def run_game(gamestatus, suppliedguess='', save=False):
+  tries, code = gamestatus
+  if debug:
+    print tries
+    print code
+    print suppliedguess
+    print save
+
   won=False
-  tries=0
+  result=[0]*4
   while not won and tries <10:
     tries=tries+1  
-    print 'Try',tries
-    guess = read_guess()
-    won = check_code(code, guess)
+    if suppliedguess == '':
+      print 'Try',tries
+      guess = read_guess()
+    else:
+      #fixme generieke functie maken
+      guess = []
+      #Only allow the first 4 characters, they must be unique and of integer type
+      for character in suppliedguess[:4]:
+        if character.isdigit() and int(character) not in guess:
+          guess.append(int(character))
+    result, won = check_code(code, guess)
+    if suppliedguess == '':
+      print 'Result:\t',result
+      print
+    if save:
+      try:
+        pickle.dump( (tries,code), open(savefile,"wb"))
+      except:
+        print 'Could not write savegame file.'
+      if not won and tries<10:
+        return (tries,result)#only allow one try every time
 
-  if won:
-    print 'You won! Tries:',tries
+  if save and (won or tries>=10):
+    try:
+      remove(savefile)
+    except:
+      print 'Could not remove savegame file.'
+  if suppliedguess == '':
+    if won:
+      print 'You won! Tries:',tries
+    else:
+      print 'You lost!'
+
+    print 'The code was: %s' % ''.join(map(str,code))
   else:
-    print 'You lost!'
+    return (tries,result)
 
-  print 'The code was: %s' % ''.join(map(str,code))
+def newgamestatus():
+  return (0,new_code())
 
 def new_game():
-  start_game(new_code())
+  print '\
+  Mastermind - Guess the code\r\n\
+  Available \'colors\' are: 1,2,3,4,5,6.\r\n\
+  The code consists of a combination of 4 unique colors.\r\n\
+  You can guess 10 times before the game is over.\r\n\
+  Input your guess like this: \'1234\'.\r\n\
+  After each guess the computer returns how many items were guessed correct (this is indicated by a \'2\')\r\n\
+  and how many colors were guessed correct but had an incorrect position. (this is indicated by a \'1\').\r\n\
+  So if you get %s the guess was correct.\r\n\
+  If you guess the code within 10 tries, you win!\r\n\
+  ' % ','.join(map(str,allcorrect))
+
+  run_game(newgamestatus())
+
+def resume_game(guess):
+  try:
+    gamestatus = pickle.load(open(savefile,"rb"))
+  except:
+    gamestatus = newgamestatus()
+  if debug:
+    print 'gamestatus: ',gamestatus
+  tries,result = run_game(gamestatus,guess,True)
+  print '%i %s' % (tries, ''.join(map(str,result)))
 
 if __name__ == '__main__':
-  new_game()
+  if len(argv) == 1:
+    new_game()
+  else:
+    resume_game(argv[1])
 
