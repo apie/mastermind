@@ -1,0 +1,15 @@
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Corben', Georgia, Times, serif;
+}
+body, p, div {
+    font-family: 'Nobile', Helvetica, Arial, sans-serif;
+    background-color: lemonchiffon;
+    color: darkslateblue;
+}
+fieldset {
+  margin-right: 40pc;
+}
+textarea {
+  padding: 5px;
+  font-family: 'Nobile', Helvetica, Arial, sans-serif;
+}

@@ -8,10 +8,11 @@ from random import shuffle
 import pickle
 from os import remove
 from sys import argv
+from json import dumps
 
 debug=False
 allcorrect = [2]*4
-savefile = "mastermind_status.p"
+savefile = "mastermind_status.pickle"
 
 def check_code( code, guess ):
   if debug:
@@ -82,9 +83,9 @@ def run_game(gamestatus, suppliedguess='', save=False):
     tries=tries+1  
     if suppliedguess == '':
       print 'Try',tries
-      guess = read_guess()
+      guess = read_guess() #<guess daarin meesturen
     else:
-      #fixme generieke functie maken
+      #fixme generieke functie maken die returnt of de guess geldig was
       guess = []
       #Only allow the first 4 characters, they must be unique and of integer type
       for character in suppliedguess[:4]:
@@ -100,22 +101,14 @@ def run_game(gamestatus, suppliedguess='', save=False):
       except:
         print 'Could not write savegame file.'
       if not won and tries<10:
-        return (tries,result)#only allow one try every time
+        return (tries,result,won)#only allow one try every time
 
   if save and (won or tries>=10):
     try:
       remove(savefile)
     except:
       print 'Could not remove savegame file.'
-  if suppliedguess == '':
-    if won:
-      print 'You won! Tries:',tries
-    else:
-      print 'You lost!'
-
-    print 'The code was: %s' % ''.join(map(str,code))
-  else:
-    return (tries,result)
+  return (tries,result,won)
 
 def newgamestatus():
   return (0,new_code())
@@ -133,7 +126,15 @@ def new_game():
   If you guess the code within 10 tries, you win!\r\n\
   ' % ','.join(map(str,allcorrect))
 
-  run_game(newgamestatus())
+  gamestatus = newgamestatus()
+  tries,code = gamestatus;
+  tries,result,won = run_game(gamestatus)
+  if won:
+    print 'You won! Tries:',tries
+  else:
+    print 'You lost!'
+
+  print 'The code was: %s' % ''.join(map(str,code))
 
 def resume_game(guess):
   try:
@@ -142,12 +143,13 @@ def resume_game(guess):
     gamestatus = newgamestatus()
   if debug:
     print 'gamestatus: ',gamestatus
-  tries,result = run_game(gamestatus,guess,True)
-  print '%i %s' % (tries, ''.join(map(str,result)))
+  return run_game(gamestatus,guess,True)
+
 
 if __name__ == '__main__':
   if len(argv) == 1:
     new_game()
   else:
-    resume_game(argv[1])
-
+    tries,result,won = resume_game(argv[1])
+    lost = tries>=10
+    print dumps( {'tries':tries, 'result':'%s' % ''.join(map(str,result)), 'won':won, 'lost':lost})

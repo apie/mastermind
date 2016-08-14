@@ -1,0 +1,4 @@
+<Files mastermind_status.pickle>
+order allow,deny
+deny from all
+</Files>
