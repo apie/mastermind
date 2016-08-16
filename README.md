@@ -12,6 +12,11 @@ If you guess the code within 10 tries, you win!
 Description
 -----------
 Main script is mastermind.py.
-Files for the web version are in web/
+Interactive mode is started by just running the script. 'Savegame' mode works by providing your guess as an argument on the commandline. The status is then saved in a pickle file. The web version also works with this mode.
 
-Mastermind.php calls mastermind.py so that file needs to be in the same directory for the web version to work.
+Files for the web version are in web/. Mastermind.php calls mastermind.py.
+
+Todo
+----
+Support for multiple users by letting users enter their name and saving the name in the status file as well.
+
