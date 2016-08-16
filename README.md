@@ -8,3 +8,10 @@ After each guess the computer returns how many items were guessed correct (this 
 and how many colors were guessed correct but had an incorrect position. (this is indicated by a '1').
 So if you get [2, 2, 2, 2] the guess was correct.
 If you guess the code within 10 tries, you win!
+
+Description
+-----------
+Main script is mastermind.py.
+Files for the web version are in web/
+
+Mastermind.php calls mastermind.py so that file needs to be in the same directory for the web version to work.
