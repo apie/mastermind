@@ -1,45 +1,45 @@
 <html>
 
 <head>
-<title>Mastermind</title>
-<script language="javascript" type="text/javascript" src="script.js">
-</script>
-<link rel="stylesheet" type="text/css" href="style.css">
+  <title>Mastermind</title>
+  <script language="javascript" type="text/javascript" src="script.js">
+  </script>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
-<h1>Mastermind - Guess the code</h1>
-<p>
-Available 'colors' are: 1,2,3,4,5,6. The code consists of a combination of 4 unique colors. You can guess 10 times before the game is over.
-</p>
+  <h1>Mastermind - Guess the code</h1>
+  <p>
+  Available 'colors' are: 1,2,3,4,5,6. The code consists of a combination of 4 unique colors. You can guess 10 times before the game is over.
+  </p>
 
-<p>
-Input your guess like this: '1234'.  After each guess the computer returns how many items were guessed correct (this is indicated by a '2') and how many colors were guessed correct but had an incorrect position. (this is indicated by a '1').  So if you get 2222 the guess was correct.
-</p>
+  <p>
+  Input your guess like this: '1234'.  After each guess the computer returns how many items were guessed correct (this is indicated by a '2') and how many colors were guessed correct but had an incorrect position. (this is indicated by a '1').  So if you get 2222 the guess was correct.
+  </p>
 
-<p>
-If you guess the code within 10 tries, you win!
-</p>
+  <p>
+  If you guess the code within 10 tries, you win!
+  </p>
 
-<fieldset>
-  <form name="feedback_form" id="feedback_form" method="GET" action="#">
-    <legend>
-      Enter your guess and hit enter or click <i>check</i>.
-    </legend>
-    <br />
-    <div id="form_elements">
-      <label for="guess" autofocus>Guess</label><br />
-      <input name="guess" id="guess" type="text" /><br />
-      <input name="action" id="action" type="submit" value="Check" />
-    </div>
-  </form>
-  <label for="tries">Tries</label><br />
-  <textarea name="tries" id="tries" rows="1" cols="2" readonly></textarea><br />
-  <label for="result">Result</label><br />
-  <textarea name="result" id="result" rows="10" cols="26" readonly></textarea><br />
-  <label for="result">Gameresult</label><br />
-  <textarea name="gameresult" id="gameresult" rows="1" cols="16" readonly></textarea><br />
-</fieldset>
+  <fieldset>
+    <form name="feedback_form" id="feedback_form" method="GET" action="#">
+      <legend>
+        Enter your guess and hit enter or click <i>check</i>.
+      </legend>
+      <br />
+      <div id="form_elements">
+        <label for="guess" autofocus>Guess</label><br />
+        <input name="guess" id="guess" type="text" /><br />
+        <input name="action" id="action" type="submit" value="Check" />
+      </div>
+    </form>
+    <label for="tries">Tries</label><br />
+    <textarea name="tries" id="tries" rows="1" cols="2" readonly></textarea><br />
+    <label for="result">Result</label><br />
+    <textarea name="result" id="result" rows="10" cols="26" readonly></textarea><br />
+    <label for="result">Gameresult</label><br />
+    <textarea name="gameresult" id="gameresult" rows="1" cols="16" readonly></textarea><br />
+  </fieldset>
 
 
 </body>
