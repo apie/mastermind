@@ -33,7 +33,7 @@ function saveData() {
         }
         document.getElementById("tries").innerHTML = resultobj.tries;
         document.getElementById("result").innerHTML += "Guess: "
-          document.getElementById("result").innerHTML += guess+" Result: "+resultobj.result;
+        document.getElementById("result").innerHTML += guess+" Result: "+resultobj.result;
         if(resultobj.won) {
           document.getElementById("gameresult").innerHTML = "You won!";
         }
