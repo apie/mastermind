@@ -83,9 +83,9 @@ def run_game(gamestatus, suppliedguess='', save=False):
     tries=tries+1  
     if suppliedguess == '':
       print 'Try',tries
-      guess = read_guess() #<guess daarin meesturen
+      guess = read_guess() # todo add guess argument
     else:
-      #fixme generieke functie maken die returnt of de guess geldig was
+      # todo create generic function wich returns if guess was valid
       guess = []
       #Only allow the first 4 characters, they must be unique and of integer type
       for character in suppliedguess[:4]:
