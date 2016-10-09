@@ -9,10 +9,12 @@ import pickle
 from os import remove
 from sys import argv
 from json import dumps
+from datetime import datetime
 
 debug=False
 allcorrect = [2]*4
 savefile = "mastermind_status.pickle"
+highscorefile = "mastermind_highscore.pickle"
 
 def check_code( code, guess ):
   if debug:
@@ -69,7 +71,8 @@ def new_code():
   shuffle(code)
   return code[:4] #return 4 items
 
-def run_game(gamestatus, suppliedguess='', save=False):
+#returns (tries,result,won)
+def run_game(player, gamestatus, suppliedguess='', save=False):
   tries, code = gamestatus
   if debug:
     print tries
@@ -97,7 +100,7 @@ def run_game(gamestatus, suppliedguess='', save=False):
       print
     if save:
       try:
-        pickle.dump( (tries,code), open(savefile,"wb"))
+        pickle.dump( (tries,code), open('status/'+player+savefile,"wb"))
       except:
         print 'Could not write savegame file.'
       if not won and tries<10:
@@ -105,13 +108,54 @@ def run_game(gamestatus, suppliedguess='', save=False):
 
   if save and (won or tries>=10):
     try:
-      remove(savefile)
+      remove('status/'+player+savefile)
     except:
       print 'Could not remove savegame file.'
   return (tries,result,won)
 
 def newgamestatus():
   return (0,new_code())
+
+def askplayer():
+  player = ''
+  while player == '':
+    player = raw_input('Your name: ')
+    if player == '':
+      if raw_input('Quit? (y to quit): ') == 'y':
+        exit()
+  return player[:10]
+
+def save_highscore(player, tries):
+  try:
+    highscores = pickle.load(open(highscorefile,"rb"))
+  except:
+    print 'Could not open high score file.'
+    highscores = []
+
+  highscores.append((datetime.now(),player,tries))
+  highscores = sorted(highscores, key=lambda tries: tries[2])
+
+  try:
+    pickle.dump( highscores, open(highscorefile,"wb"))
+  except:
+    print 'Could not write high score file.'
+
+def show_highscores():
+  try:
+    highscores = pickle.load(open(highscorefile,"rb"))
+  except:
+    print 'Could not open high score file.'
+    return
+
+  print 'Highscores:'
+  i=1
+  for date,player,tries in highscores:
+    print 'Date: %10s, Player: %10s, Tries: %2d' % (datetime.isoformat(date),player,tries)
+    if i==10:
+      break
+    i+=1
+  print
+
 
 def new_game():
   print '\
@@ -126,30 +170,40 @@ def new_game():
   If you guess the code within 10 tries, you win!\r\n\
   ' % ','.join(map(str,allcorrect))
 
+  show_highscores()
+
+  player = askplayer()
   gamestatus = newgamestatus()
   tries,code = gamestatus;
-  tries,result,won = run_game(gamestatus)
+  tries,result,won = run_game(player,gamestatus)
   if won:
     print 'You won! Tries:',tries
+    save_highscore(player,tries)
   else:
     print 'You lost!'
 
   print 'The code was: %s' % ''.join(map(str,code))
 
-def resume_game(guess):
+def resume_game(player,guess):
   try:
-    gamestatus = pickle.load(open(savefile,"rb"))
+    gamestatus = pickle.load(open('status/'+player+savefile,"rb"))
   except:
     gamestatus = newgamestatus()
   if debug:
-    print 'gamestatus: ',gamestatus
-  return run_game(gamestatus,guess,True)
+    print 'gamestatus',player,': ',gamestatus
+  return run_game(player,gamestatus,guess,True)
 
 
 if __name__ == '__main__':
   if len(argv) == 1:
     new_game()
-  else:
-    tries,result,won = resume_game(argv[1])
+  elif len(argv) == 3:
+    player = argv[1]
+    guess = argv[2]
+    tries,result,won = resume_game(player, guess)
     lost = tries>=10
-    print dumps( {'tries':tries, 'result':'%s' % ''.join(map(str,result)), 'won':won, 'lost':lost})
+    print dumps( {'player':player, 'tries':tries, 'result':'%s' % ''.join(map(str,result)), 'won':won, 'lost':lost})
+    if won:
+      save_highscore(player,tries)
+  else:
+    print 'Either dont supply arguments for interactive mode, or supply 2 arguments: player name and your guess.'

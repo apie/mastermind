@@ -14,13 +14,28 @@ function XMLHTTPObject() {
   } else  { xmlhttp = false;}//Browser don't support Ajax
   return xmlhttp;
 }
+var http1 = new XMLHTTPObject();
+function printhighscores() {
+  document.getElementById("highscores").innerHTML = "";
+  http1.open("GET","mastermind.php?show=highscores",true);
+  http1.onreadystatechange = function() {
+    if(http1.readyState == 4) {
+      if(http1.status == 200) {
+        document.getElementById("highscores").innerHTML = http1.responseText;
+      }
+    }
+  }
+  http1.send(null);
+}
+
 var http = new XMLHTTPObject();
 //This function will be called when the form is submited
 function saveData() {
+  var player = document.getElementById("player").value;
   var guess = document.getElementById("guess").value;
 
   //By calling this file, we have saved the data.
-  http.open("GET","mastermind.php?guess=" + guess ,true);
+  http.open("GET","mastermind.php?player="+player+"&guess=" + guess ,true);
   document.getElementById("gameresult").innerHTML = "";
   http.onreadystatechange = function() {
     if(http.readyState == 4) {
@@ -47,7 +62,9 @@ function saveData() {
   return false;//Prevent the form from being submited
 }
 function init() {
-  document.getElementById("guess").focus();
+  printhighscores();
+  document.getElementById("player").focus();
   document.getElementById("feedback_form").onsubmit = saveData; //The saveData function is attached to the submit action of the form.
 }
 window.onload = init; //The 'init' function will be called when the page is loaded.
+
