@@ -15,8 +15,3 @@ Main script is mastermind.py.
 Interactive mode is started by just running the script. 'Savegame' mode works by providing your guess as an argument on the commandline. The status is then saved in a pickle file. The web version also works with this mode.
 
 Files for the web version are in web/. Mastermind.php calls mastermind.py.
-
-Todo
-----
-Support for multiple users by letting users enter their name and saving the name in the status file as well.
-
