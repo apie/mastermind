@@ -51,6 +51,7 @@ function saveData() {
         document.getElementById("result").innerHTML += guess+" Result: "+resultobj.result;
         if(resultobj.won) {
           document.getElementById("gameresult").innerHTML = "You won!";
+          printhighscores();
         }
         else if (resultobj.lost) {
           document.getElementById("gameresult").innerHTML = "You lost :(";
