@@ -31,6 +31,8 @@ function printhighscores() {
 var http = new XMLHTTPObject();
 //This function will be called when the form is submited
 function saveData() {
+  //disable the button until we have received the result, as to prevent double submit
+  document.getElementById("action").disabled = true;
   var player = document.getElementById("player").value;
   var guess = document.getElementById("guess").value;
 
@@ -40,6 +42,7 @@ function saveData() {
   http.onreadystatechange = function() {
     if(http.readyState == 4) {
       if(http.status == 200) {
+        document.getElementById("action").disabled = false;
         var resultobj = JSON.parse(http.responseText);
         if(parseInt(resultobj.tries)==1){
           document.getElementById("result").innerHTML = "";
@@ -51,10 +54,12 @@ function saveData() {
         document.getElementById("result").innerHTML += guess+" Result: "+resultobj.result;
         if(resultobj.won) {
           document.getElementById("gameresult").innerHTML = "You won!";
+          document.getElementById("action").disabled = true;
           printhighscores();
         }
         else if (resultobj.lost) {
           document.getElementById("gameresult").innerHTML = "You lost :(";
+          document.getElementById("action").disabled = true;
         }
       }
     }
@@ -63,6 +68,7 @@ function saveData() {
   return false;//Prevent the form from being submited
 }
 function init() {
+  document.getElementById("action").disabled = false;//make sure the button is enabled
   printhighscores();
   document.getElementById("player").focus();
   document.getElementById("feedback_form").onsubmit = saveData; //The saveData function is attached to the submit action of the form.
