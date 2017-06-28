@@ -71,6 +71,12 @@ def new_code():
   shuffle(code)
   return code[:4] #return 4 items
 
+def clearSaveGame(player):
+  try:
+    remove('status/'+player+savefile)
+  except:
+    print 'Could not remove savegame file.'
+
 #returns (tries,result,won)
 def run_game(player, gamestatus, suppliedguess='', save=False):
   tries, code = gamestatus
@@ -107,10 +113,7 @@ def run_game(player, gamestatus, suppliedguess='', save=False):
         return (tries,result,won)#only allow one try every time
 
   if save and (won or tries>=10):
-    try:
-      remove('status/'+player+savefile)
-    except:
-      print 'Could not remove savegame file.'
+    clearSaveGame(player)
   return (tries,result,won)
 
 def newgamestatus():

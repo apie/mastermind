@@ -28,13 +28,16 @@ function printhighscores() {
   http1.send(null);
 }
 
-var http = new XMLHTTPObject();
+
 //This function will be called when the form is submited
 function saveData() {
   //disable the button until we have received the result, as to prevent double submit
   document.getElementById("action").disabled = true;
+
+  var http = new XMLHTTPObject();
   var player = document.getElementById("player").value;
   var guess = document.getElementById("guess").value;
+  console.log('saving '+player+' '+guess);
 
   //By calling this file, we have saved the data.
   http.open("GET","mastermind.php?player="+player+"&guess=" + guess ,true);
@@ -43,23 +46,26 @@ function saveData() {
     if(http.readyState == 4) {
       if(http.status == 200) {
         document.getElementById("action").disabled = false;
-        var resultobj = JSON.parse(http.responseText);
-        if(parseInt(resultobj.tries)==1){
-          document.getElementById("result").innerHTML = "";
-        } else {
-          document.getElementById("result").innerHTML += "\r\n";
-        }
-        document.getElementById("tries").innerHTML = resultobj.tries;
-        document.getElementById("result").innerHTML += "Guess: "
-        document.getElementById("result").innerHTML += guess+" Result: "+resultobj.result;
-        if(resultobj.won) {
-          document.getElementById("gameresult").innerHTML = "You won!";
-          document.getElementById("action").disabled = true;
-          printhighscores();
-        }
-        else if (resultobj.lost) {
-          document.getElementById("gameresult").innerHTML = "You lost :(";
-          document.getElementById("action").disabled = true;
+        var res = http.responseText
+        if(res != null){
+          var resultobj = JSON.parse(res);
+          if(parseInt(resultobj.tries)==1){
+            document.getElementById("result").innerHTML = "";
+          } else {
+            document.getElementById("result").innerHTML += "\r\n";
+          }
+          document.getElementById("tries").innerHTML = resultobj.tries;
+          document.getElementById("result").innerHTML += "Guess: "
+          document.getElementById("result").innerHTML += guess+" Result: "+resultobj.result;
+          if(resultobj.won) {
+            document.getElementById("gameresult").innerHTML = "You won!";
+            document.getElementById("action").disabled = true;
+            printhighscores();
+          }
+          else if (resultobj.lost) {
+            document.getElementById("gameresult").innerHTML = "You lost :(";
+            document.getElementById("action").disabled = true;
+          }
         }
       }
     }
@@ -67,11 +73,40 @@ function saveData() {
   http.send(null);
   return false;//Prevent the form from being submited
 }
+
 function init() {
   document.getElementById("action").disabled = false;//make sure the button is enabled
   printhighscores();
   document.getElementById("player").focus();
   document.getElementById("feedback_form").onsubmit = saveData; //The saveData function is attached to the submit action of the form.
+  document.getElementById("newgame_form").onsubmit = newGame;
+
+  document.getElementById("guess").value = '';
+  document.getElementById("tries").innerHTML = '';
+  document.getElementById("result").innerHTML = '';
+  document.getElementById("gameresult").innerHTML = '';
 }
+
+function newGame(){
+  var player = document.getElementById("player").value;
+  console.log('newgame '+player);
+  if( player != '') {
+    var http2 = new XMLHTTPObject();
+    http2.open("GET","mastermind.php?player="+player+"&new=game" ,true);
+    http2.onreadystatechange = function() {
+      if(http2.readyState == 4) {
+        if(http2.status == 200) {
+          //wait until it has been loaded
+        }
+      }
+     }
+    http2.send(null);
+  }
+  init();//reset the page
+  document.getElementById("guess").focus();
+  return false;//Prevent the form from being submited
+}
+
+
 window.onload = init; //The 'init' function will be called when the page is loaded.
 
